@@ -10,9 +10,9 @@ from selenium.webdriver.support.ui import Select
 from webdriver_manager.chrome import ChromeDriverManager
 
 dir = f'{str(os.getcwd())}\\'
-client_code = input("Enter Client Code: ")
+
 print("Please wait while loging in")
-url = "https://ecf-train.nvb.uscourts.gov/cgi-bin/Dispatch.pl?caseupld"
+url = "https://train-login.uscourts.gov/csologin/login.jsf"
 
 options = Options()
 ua = UserAgent()
@@ -25,7 +25,7 @@ try:
     driver.get(url)
     driver.find_element(By.ID, "loginForm:loginName").send_keys("davkrieg")
     driver.find_element(By.ID, "loginForm:password").send_keys("Whited0g#")
-    driver.find_element(By.ID, "loginForm:clientCode").send_keys(client_code)
+    driver.find_element(By.ID, "loginForm:clientCode").send_keys("anycode")
     driver.find_element(By.ID, "loginForm:fbtnLogin").click()
     time.sleep(2)
     driver.find_element(By.ID, "regmsgPopup:bpmContinue").click()
@@ -48,6 +48,7 @@ while True:
         cert_for_credit_counsel = input("Cert_for_credit_counsel (.pdf): ")
         print("Please wait while uploading files")
         try:
+            url = "https://ecf-train.nvb.uscourts.gov/cgi-bin/Dispatch.pl?caseupld"
             driver.get(url)
             time.sleep(2)
             driver.find_element(By.NAME, "case_1").send_keys(dir + case_info)
@@ -67,15 +68,18 @@ while True:
         driver.get(url1)
         driver.find_element(By.ID, "case_number_text_area_0").send_keys("22-70031")
         driver.find_element(By.ID, "case_number_find_button_0").click()
-        time.sleep(4)
-        driver.find_element(By.NAME, "button1").click()
-        l = driver.find_elements(By.CLASS_NAME, "fakeOption")
+        driver.implicitly_wait(5)
+        time.sleep(15)
+        driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/p/table/tbody/tr/td[1]/input').click()
+        time.sleep(2)
+        l = driver.find_element(By.ID, "list_misc_container").find_elements(By.CLASS_NAME, "fakeOption")
         for i in l:
             text = i.text
+            print(text)
             if text == "Statement of Social Security Number(s) (Must be Docketed Separately)":
                 i.click()
-        driver.find_element(By.ID, "button1").click()
-        select = Select(driver.find_element(By.NAME, "yn"))
+        driver.find_element(By.NAME, "button1").click()
+        select = Select(driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/select'))
         select.select_by_visible_text("No")
         driver.find_element(By.NAME, "button1").click()
         l = driver.find_element(By.NAME, "party_person").find_elements(By.TAG_NAME, "option")
