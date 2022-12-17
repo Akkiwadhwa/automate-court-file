@@ -1,6 +1,5 @@
 import os
 import time
-
 from fake_useragent import UserAgent
 from selenium import webdriver
 from selenium.webdriver.chrome.options import Options
@@ -17,7 +16,7 @@ url = "https://train-login.uscourts.gov/csologin/login.jsf"
 options = Options()
 ua = UserAgent()
 userAgent = ua.random
-# options.add_argument("--headless")
+options.add_argument("--headless")
 options.add_argument(f'user-agent={userAgent}')
 options.add_experimental_option("detach", True)
 driver = webdriver.Chrome(service=ChromeService(ChromeDriverManager().install()), options=options)
@@ -64,41 +63,48 @@ while True:
             driver.implicitly_wait(2)
             print("Files uploaded successfully")
     elif c == "A":
-        url1 = "https://ecf-train.nvb.uscourts.gov/cgi-bin/Dispatch.pl?misc"
-        driver.get(url1)
-        driver.find_element(By.ID, "case_number_text_area_0").send_keys("22-70031")
-        driver.find_element(By.ID, "case_number_find_button_0").click()
-        driver.implicitly_wait(5)
-        time.sleep(15)
-        driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/p/table/tbody/tr/td[1]/input').click()
-        time.sleep(2)
-        l = driver.find_element(By.ID, "list_misc_container").find_elements(By.CLASS_NAME, "fakeOption")
-        for i in l:
-            text = i.text
-            print(text)
-            if text == "Statement of Social Security Number(s) (Must be Docketed Separately)":
-                i.click()
-        driver.find_element(By.NAME, "button1").click()
-        select = Select(driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/select'))
-        select.select_by_visible_text("No")
-        driver.find_element(By.NAME, "button1").click()
-        l = driver.find_element(By.NAME, "party_person").find_elements(By.TAG_NAME, "option")
-        for i in l:
-            text = i.text
-            if "[Debtor]" in text:
-                i.click()
-        driver.find_element(By.NAME, "button1").click()
-        driver.find_element(By.NAME, "file_1").send_keys(dir + "a.pdf")
-        driver.find_element(By.NAME, "button1").click()
-        time.sleep(2)
-        driver.find_element(By.NAME, "button1").click()
-        time.sleep(2)
-        driver.find_element(By.NAME, "button1").click()
-        time.sleep(2)
-        driver.find_element(By.NAME, "button1").click()
-        time.sleep(2)
-        driver.find_element(By.CLASS_NAME, "container-close")
-        driver.get_screenshot_as_file(filename=f"{str(round(time.time()))}.png")
+        try:
+            print("Script starting")
+            url1 = "https://ecf-train.nvb.uscourts.gov/cgi-bin/Dispatch.pl?misc"
+            driver.get(url1)
+            driver.find_element(By.ID, "case_number_text_area_0").send_keys("22-70032")
+            driver.find_element(By.ID, "case_number_find_button_0").click()
+            driver.implicitly_wait(5)
+            time.sleep(15)
+            driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/p/table/tbody/tr/td[1]/input').click()
+            time.sleep(2)
+            l = driver.find_element(By.ID, "list_misc_container").find_elements(By.CLASS_NAME, "fakeOption")
+            for i in l:
+                text = i.text
+                if text == "Statement of Social Security Number(s) (Must be Docketed Separately)":
+                    i.click()
+            driver.find_element(By.NAME, "button1").click()
+            select = Select(driver.find_element(By.XPATH, '//*[@id="cmecfMainContent"]/form/select'))
+            select.select_by_visible_text("No")
+            driver.find_element(By.NAME, "button1").click()
+            l = driver.find_element(By.NAME, "party_person").find_elements(By.TAG_NAME, "option")
+            for i in l:
+                text = i.text
+                if "[Debtor]" in text:
+                    i.click()
+            driver.find_element(By.NAME, "button1").click()
+            driver.find_element(By.NAME, "file_1").send_keys(dir + "a.pdf")
+            driver.find_element(By.NAME, "button1").click()
+            time.sleep(2)
+            driver.find_element(By.NAME, "button1").click()
+            time.sleep(2)
+            driver.find_element(By.NAME, "button1").click()
+            time.sleep(2)
+            driver.find_element(By.NAME, "button1").click()
+            time.sleep(2)
+            driver.find_element(By.CLASS_NAME, "container-close").click()
+            driver.get_screenshot_as_file(filename=f"{str(round(time.time()))}.png")
+        except Exception as e:
+            print(e)
+        else:
+            driver.implicitly_wait(2)
+            print("Files uploaded successfully")
+
 
     else:
         driver.close()
